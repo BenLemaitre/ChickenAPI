@@ -11,8 +11,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 MongoClient.connect(db.url, (err, database) => {
 	if (err) return console.log(err)
-	                  
-	db = database.db("chicken-api")
+
+	db = database.db("puppets-api")
 	require('./app/routes')(app, db);
 
 	require('./app/routes')(app, {});
