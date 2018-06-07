@@ -21,14 +21,14 @@ exports.choregraphy_create = function (req, res) {
             return next(err);
         }
         res.send('Choregraphy ' + choregraphy.name + ' created successfully')
-    })
+    });
 };
 
 exports.choregraphy_details = function (req, res) {
     Choregraphy.findById(req.params.id, function (err, item) {
         if (err) return next(err);
         res.send(item);
-    })
+    });
 };
 
 exports.choregraphy_update = function (req, res) {
@@ -42,5 +42,5 @@ exports.choregraphy_delete = function (req, res) {
     Choregraphy.findByIdAndRemove(req.params.id, function (err) {
         if (err) return next(err);
         res.send('Deleted successfully!');
-    })
+    });
 };

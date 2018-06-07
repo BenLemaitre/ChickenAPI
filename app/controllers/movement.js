@@ -21,14 +21,14 @@ exports.movement_create = function (req, res) {
             return next(err);
         }
         res.send('Movement ' + movement.name + ' created successfully')
-    })
+    });
 };
 
 exports.movement_details = function (req, res) {
     Movement.findById(req.params.id, function (err, item) {
         if (err) return next(err);
         res.send(item);
-    })
+    });
 };
 
 exports.movement_update = function (req, res) {
@@ -42,5 +42,5 @@ exports.movement_delete = function (req, res) {
     Movement.findByIdAndRemove(req.params.id, function (err) {
         if (err) return next(err);
         res.send('Deleted successfully!');
-    })
+    });
 };
