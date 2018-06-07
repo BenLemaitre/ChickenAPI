@@ -1,56 +1,12 @@
 // choregraphy_routes.js
-var ObjectID = require('mongodb').ObjectID;
-module.exports = function(app, db) {
+var express = require('express');
+var router = express.Router();
+var choregraphy_controller = require('../controllers/choregraphy');
 
-	//Create
-	app.post('/choregraphies', (req, res) => {
-		const choregraphy = { name: req.body.name };
-		db.collection('choregraphies').insert(choregraphy, (err, result) => {
-		  if (err) {
-		    res.send({ 'error': 'An error has occurred' });
-		  } else {
-		    res.send(result.ops[0]);
-		  }
-		});
-	});
+router.get('/', choregraphy_controller.choregraphy_list); 				//List all choregraphies
+router.post('/create', choregraphy_controller.choregraphy_create); 		//Create a choregraphy
+router.get('/:id', choregraphy_controller.choregraphy_details); 			//Get details of a choregraphy
+router.put('/:id/update', choregraphy_controller.choregraphy_update);		//Update a choregraphy
+router.delete('/:id/delete', choregraphy_controller.choregraphy_delete);	//Delete a choregraphy
 
-	//Read
-	app.get('/choregraphies/:id', (req, res) => {
-		const id = req.params.id;
-		const details = { '_id': new ObjectID(id) };
-		db.collection('choregraphies').findOne(details, (err, item) => {
-		  if (err) {
-		    res.send({'error':'An error has occurred'});
-		  } else {
-		    res.send(item);
-		  }
-		});
-	});
-
-	//Update
-	app.put('/choregraphies/:id', (req, res) => {
-		const id = req.params.id;
-		const details = { '_id': new ObjectID(id) };
-		const choregraphy = { name: req.body.name };
-		db.collection('choregraphies').update(details, choregraphy, (err, result) => {
-		  if (err) {
-		      res.send({'error':'An error has occurred'});
-		  } else {
-		      res.send(choregraphy);
-		  }
-		});
-	});
-
-	//Delete
-	app.delete('/choregraphies/:id', (req, res) => {
-		const id = req.params.id;
-		const details = { '_id': new ObjectID(id) };
-		db.collection('choregraphies').remove(details, (err, item) => {
-		  if (err) {
-		    res.send({'error':'An error has occurred'});
-		  } else {
-		    res.send('Choregraphy ' + id + ' deleted!');
-		  }
-		});
-	});
-};
+module.exports = router;

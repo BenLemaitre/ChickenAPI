@@ -1,56 +1,12 @@
 // puppet_routes.js
-var ObjectID = require('mongodb').ObjectID;
-module.exports = function(app, db) {
+var express = require('express');
+var router = express.Router();
+var puppet_controller = require('../controllers/puppet');
 
-	//Create
-	app.post('/puppets', (req, res) => {
-		const puppet = { name: req.body.name, btId: req.body.btId, btPw: req.body.btPw };
-		db.collection('puppets').insert(puppet, (err, result) => {
-		  if (err) {
-		    res.send({ 'error': 'An error has occurred' });
-		  } else {
-		    res.send(result.ops[0]);
-		  }
-		});
-	});
+router.get('/', puppet_controller.puppet_list); 				//List all puppets
+router.post('/create', puppet_controller.puppet_create); 		//Create a puppet
+router.get('/:id', puppet_controller.puppet_details); 			//Get details of a puppet
+router.put('/:id/update', puppet_controller.puppet_update);		//Update a puppet
+router.delete('/:id/delete', puppet_controller.puppet_delete);	//Delete a puppet
 
-	//Read
-	app.get('/puppets/:id', (req, res) => {
-		const id = req.params.id;
-		const details = { '_id': new ObjectID(id) };
-		db.collection('puppets').findOne(details, (err, item) => {
-		  if (err) {
-		    res.send({'error':'An error has occurred'});
-		  } else {
-		    res.send(item);
-		  }
-		});
-	});
-
-	//Update
-	app.put('/puppets/:id', (req, res) => {
-		const id = req.params.id;
-		const details = { '_id': new ObjectID(id) };
-		const puppet = { name: req.body.name, btId: req.body.btId, btPw: req.body.btPw };
-		db.collection('puppets').update(details, puppet, (err, result) => {
-		  if (err) {
-		      res.send({'error':'An error has occurred'});
-		  } else {
-		      res.send(puppet);
-		  }
-		});
-	});
-
-	//Delete
-	app.delete('/puppets/:id', (req, res) => {
-		const id = req.params.id;
-		const details = { '_id': new ObjectID(id) };
-		db.collection('puppets').remove(details, (err, item) => {
-		  if (err) {
-		    res.send({'error':'An error has occurred'});
-		  } else {
-		    res.send('Puppet ' + id + ' deleted!');
-		  }
-		});
-	});
-};
+module.exports = router;
