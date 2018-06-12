@@ -37,8 +37,17 @@ exports.user_register = function (req, res, next) {
       }
     });
 
-  } else if (req.body.logemail && req.body.logpassword) {
-    User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
+  } else {
+    var err = new Error('All fields required.');
+    err.status = 400;
+    return next(err);
+  }
+};
+
+// POST checking the login data
+exports.user_login = function (req, res, next) {
+  if (req.body.email && req.body.password) {
+    User.authenticate(req.body.email, req.body.password, function (error, user) {
       if (error || !user) {
         var err = new Error('Wrong email or password.');
         err.status = 401;
@@ -48,12 +57,8 @@ exports.user_register = function (req, res, next) {
         return res.redirect('/profile');
       }
     });
-  } else {
-    var err = new Error('All fields required.');
-    err.status = 400;
-    return next(err);
   }
-};
+}; 
 
 // GET route after registering
 exports.user_profile = function (req, res, next) {
