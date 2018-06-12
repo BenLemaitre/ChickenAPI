@@ -5,7 +5,7 @@ exports.puppet_list = function(req, res) {
         if(err) return next(err);
         res.send(items);
     });
-}
+};
 
 exports.puppet_create = function (req, res) {
     var puppet = new Puppet(

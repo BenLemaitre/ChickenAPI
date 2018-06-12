@@ -1,11 +1,14 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 
 // Importing routes
 var puppet = require('./app/routes/puppet_routes');
 var choregraphy = require('./app/routes/choregraphy_routes');
 var movement = require('./app/routes/movement_routes');
+var user = require('./app/routes/user_routes');
 
 var app = express();
 
@@ -18,6 +21,15 @@ mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+//Use sessions for tracking logins
+app.use(session({
+  secret: 'work hard',
+  resave: true,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: db
+  })
+}));
 
 // Enable cors
 app.use(cors());
@@ -34,6 +46,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use('/puppets', puppet);
 app.use('/choregraphies', choregraphy);
 app.use('/movements', movement);
+app.use('/', user);
 
 var port = 3000;
 
