@@ -1,18 +1,16 @@
 var Movement = require('../models/movement');
 
-exports.movement_list = function(req, res) {
+exports.movement_list = function(req, res, next) {
     Movement.find(function(err, items) {
         if(err) return next(err);
         res.send(items);
     });
 }
 
-exports.movement_create = function (req, res) {
+exports.movement_create = function (req, res, next) {
     var movement = new Movement(
         {
-            name: req.body.name,
-            btMac: req.body.btMac,
-            btPw: req.body.btPw
+            name: req.body.name
         }
     );
 
@@ -24,21 +22,21 @@ exports.movement_create = function (req, res) {
     });
 };
 
-exports.movement_details = function (req, res) {
+exports.movement_details = function (req, res, next) {
     Movement.findById(req.params.id, function (err, item) {
         if (err) return next(err);
         res.send(item);
     });
 };
 
-exports.movement_update = function (req, res) {
+exports.movement_update = function (req, res, next) {
     Movement.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, movement) {
         if (err) return next(err);
         res.send('Movement udpated.');
     });
 };
 
-exports.movement_delete = function (req, res) {
+exports.movement_delete = function (req, res, next) {
     Movement.findByIdAndRemove(req.params.id, function (err) {
         if (err) return next(err);
         res.send('Deleted successfully!');

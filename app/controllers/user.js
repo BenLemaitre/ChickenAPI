@@ -63,6 +63,8 @@ exports.user_login = function (req, res, next) {
 // GET route after registering
 exports.user_profile = function (req, res, next) {
   User.findById(req.session.userId)
+    .populate('puppets')
+    .populate('choregraphies')
     .exec(function (error, user) {
       if (error) {
         return next(error);
@@ -72,7 +74,13 @@ exports.user_profile = function (req, res, next) {
           err.status = 400;
           return next(err);
         } else {
-          return res.send('<h1>Name: </h1>' + user.username + '<h2>Mail: </h2>' + user.email + '<br><a type="button" href="/logout">Logout</a>')
+          return res.send(user
+            // '<h1>Name: </h1>' + user.username + 
+            // '<h2>Mail: </h2>' + user.email + 
+            // '<h2>Puppets: </h2>' + user.puppets[0].name +
+            // '<h2>Choregraphies: </h2>' + user.choregraphies[0].name +
+            // '<br><a type="button" href="/logout">Logout</a>'
+            )
         }
       }
     });

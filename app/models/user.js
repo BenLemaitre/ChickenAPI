@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
+var Schema = mongoose.Schema;
 
-var UserSchema = new mongoose.Schema({
+var UserSchema = new Schema({
   email: {
     type: String,
     unique: true,
@@ -21,7 +22,13 @@ var UserSchema = new mongoose.Schema({
   passwordConf: {
     type: String,
     required: true,
-  }
+  },
+  puppets: [{ 
+    type: Schema.Types.ObjectId, ref: 'Puppet'
+  }],
+  choregraphies: [{ 
+    type: Schema.Types.ObjectId, ref: 'Choregraphy'
+  }]
 });
 
 //authenticate input against database
