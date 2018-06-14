@@ -2,9 +2,14 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 ChoregraphySchema = new Schema({
-    name : String,
+    name : {
+	    type: String,
+	    required: true,
+	    trim: true
+  	},
     user: { 
-		type: Schema.Types.ObjectId, ref: 'User'
+		type: Schema.Types.ObjectId, ref: 'User',
+		required: true
 	},
 	movement : [{ 
 		type: Schema.Types.ObjectId, ref: 'Movement' 

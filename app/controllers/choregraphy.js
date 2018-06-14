@@ -1,5 +1,7 @@
 var Choregraphy = require('../models/choregraphy');
 var User = require('../models/user');
+var fs = require('fs');
+var path = require('path');
 
 exports.choregraphy_list = function(req, res, next) {
     Choregraphy.find(function(err, items) {
@@ -30,6 +32,8 @@ exports.choregraphy_create = function (req, res, next) {
                 return next(err);
         });
 
+        createScript(choregraphy);
+
         res.send('Choregraphy ' + choregraphy.name + ' created successfully')
     });
 };
@@ -57,3 +61,28 @@ exports.choregraphy_delete = function (req, res, next) {
         res.send('Deleted successfully!');
     });
 };
+
+exports.choregraphy_download = function (req, res, next) {
+    
+}
+
+function createScript(choregraphy) {
+    var pathScript = path.join(__dirname + "/../../scripts/" + choregraphy.name + ".c");
+
+    Choregraphy.findById(choregraphy.id)
+        .populate('movement')
+        .exec(function (err, item) {
+            if (err) return next(err);
+            
+            fs.writeFileSync(pathScript, "C structure\n", function(err) {
+                if(err) return next(err);
+            });
+
+            for(var i = 0; i < item.movement.length; i++) {
+                fs.appendFileSync(pathScript, '\n\n' + item.movement[i].name, function(err) {
+                    if(err) next(err);
+                });
+            }
+         }
+    );
+}
