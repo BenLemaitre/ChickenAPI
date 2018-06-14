@@ -1,7 +1,8 @@
 var Choregraphy = require('../models/choregraphy');
 var User = require('../models/user');
-var fs = require('fs');
 var path = require('path');
+var http = require('http');
+var fs = require('fs');
 
 exports.choregraphy_list = function(req, res, next) {
     Choregraphy.find(function(err, items) {
@@ -28,8 +29,7 @@ exports.choregraphy_create = function (req, res, next) {
             $push: { 'choregraphies': choregraphy._id }
         }, { 'new': true },
         function(err) {
-            if(err)
-                return next(err);
+            if(err) return next(err);
         });
 
         createScript(choregraphy);
@@ -63,7 +63,14 @@ exports.choregraphy_delete = function (req, res, next) {
 };
 
 exports.choregraphy_download = function (req, res, next) {
-    
+    Choregraphy.findById(req.params.id)
+        .exec(function (err, choregraphy) {
+            if (err) return next(err);
+          var fileLocation = path.join(__dirname + "/../../scripts/" + choregraphy.name + ".c");
+          //console.log(fileLocation);
+          res.download(fileLocation);
+        }
+    );
 }
 
 function createScript(choregraphy) {
