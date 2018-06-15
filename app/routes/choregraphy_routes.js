@@ -8,6 +8,7 @@ router.post('/create', choregraphy_controller.choregraphy_create); 			//Create a
 router.get('/:id', choregraphy_controller.choregraphy_details); 			//Get details of a choregraphy
 router.put('/:id/update', choregraphy_controller.choregraphy_update);		//Update a choregraphy
 router.delete('/:id/delete', choregraphy_controller.choregraphy_delete);	//Delete a choregraphy
-router.get('/:id/download', choregraphy_controller.choregraphy_download);	//Download the choregraphy script
+//router.get('/:id/download', choregraphy_controller.choregraphy_download);	//Download the choregraphy script
+router.post('/generate', choregraphy_controller.choregraphy_generate);		//Generate the arduino from the selected choregraphies and downloads it
 
 module.exports = router;

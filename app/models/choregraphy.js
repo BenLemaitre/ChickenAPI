@@ -13,6 +13,10 @@ ChoregraphySchema = new Schema({
 	},
 	movement : [{ 
 		type: Schema.Types.ObjectId, ref: 'Movement' 
-	}]
+	}],
+	active: {
+		type: Boolean,
+		default: false
+	}
 });
 module.exports = mongoose.model('Choregraphy', ChoregraphySchema);
