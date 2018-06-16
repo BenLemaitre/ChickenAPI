@@ -1,7 +1,7 @@
 var Choregraphy = require('../models/choregraphy');
 var User = require('../models/user');
 var path = require('path');
-var http = require('http');
+var async = require('async');
 var fs = require('fs');
 
 exports.choregraphy_list = function(req, res, next) {
@@ -32,8 +32,6 @@ exports.choregraphy_create = function (req, res, next) {
             if(err) return next(err);
         });
 
-        //createScript(choregraphy);
-
         res.send('Choregraphy ' + choregraphy.name + ' created successfully')
     });
 };
@@ -62,68 +60,44 @@ exports.choregraphy_delete = function (req, res, next) {
     });
 };
 
-exports.choregraphy_generate = function (req, res, next) {    
-    var fileName = "My_choregraphies" + Math.floor(Math.random() * 1000);
+exports.choregraphy_generate = function (req, res, next) {
+    var ts = new Date();
+    var fileName = "Choregraphies_" + ts.getFullYear() + ts.getMonth() + ts.getDate() +
+        "_" + ts.getHours() + ts.getMinutes() + ts.getSeconds()
     var pathScript = path.join(__dirname + "/../../scripts/" + fileName + ".c");
     var choregraphies = req.body.choregraphy;
 
-    fs.writeFileSync(pathScript, "C file starts\n", function(err) {
+    if(!Array.isArray(choregraphies))
+        choregraphies = [req.body.choregraphy];
+
+    fs.writeFileSync(pathScript, "C file " + fileName + " starts\n", function(err) {
         if(err) return next(err);
     });
 
-    for(var i = 0; i < choregraphies.length; i++) {
-        Choregraphy.findById(choregraphies[i])
-        .populate('movement')
-        .exec(function (err, choregraphy) {
-            if (err) return next(err);
-            
-            fs.appendFileSync(pathScript, "\n\n/*----Choregraphy " + choregraphy.name + " starts----*/\n", function(err) {
-                if(err) return next(err);
-            });
+    async.forEach(choregraphies, function(choregraphy, callback) {
+        Choregraphy.findById(choregraphy)
+            .populate('movement')
+            .exec(function (err, c) {
+                if (err) return next(err);
 
-            for(var j = 0; j < choregraphy.movement.length; j++) {
-                fs.appendFileSync(pathScript, '\n\n' + choregraphy.movement[j].name, function(err) {
-                    if(err) next(err);
+                if(c == null || c == undefined) {
+                    callback('Choregraphy not found');
+                    return res.status(404);
+                }
+
+                fs.appendFileSync(pathScript, "\n\n/*----Choregraphy " + c.name + " starts----*/\n", function(err) {
+                    if(err) return next(err);
                 });
-            }
-        });
-    }
 
-    res.download(pathScript);
-}
-
-
-
-// function download(pathScript) {
-//     Choregraphy.findById(req.params.id)
-//         .exec(function (err, choregraphy) {
-//             if (err) return next(err);
-//             var fileLocation = path.join(__dirname + "/../../scripts/" + choregraphy.name + ".c");
-//             //console.log(fileLocation);
-//             res.download(fileLocation);
-//         }
-//     );
-// }
-
-// function createScript(choregraphy) {
-//     var pathScript = path.join(__dirname + "/../../scripts/" + choregraphy.name + ".c");
-
-//     Choregraphy.findById(choregraphy.id)
-//         .populate('movement')
-//         .exec(function (err, item) {
-//             if (err) return next(err);
-            
-//             fs.writeFileSync(pathScript, "C structure\n", function(err) {
-//                 if(err) return next(err);
-//             });
-
-//             for(var i = 0; i < item.movement.length; i++) {
-//                 fs.appendFileSync(pathScript, '\n\n' + item.movement[i].name, function(err) {
-//                     if(err) next(err);
-//                 });
-//             }
-//          }
-//     );
-// }
-
-
+                for(var j = 0; j < c.movement.length; j++) {
+                    fs.appendFileSync(pathScript, '\n\n' + c.movement[j].name, function(err) {
+                        if(err) next(err);
+                    });
+                }
+                callback();
+            });
+    }, function (err) {
+        if(err) return next(err);
+        res.download(pathScript);
+    });
+};
