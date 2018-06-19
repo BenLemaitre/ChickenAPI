@@ -70,7 +70,7 @@ exports.choregraphy_generate = function (req, res, next) {
     if(!Array.isArray(choregraphies))
         choregraphies = [req.body.choregraphy];
 
-    fs.writeFileSync(pathScript, "C file " + fileName + " starts\n", function(err) {
+    fs.writeFileSync(pathScript, "/*----C file " + fileName + " starts----*/\n", function(err) {
         if(err) return next(err);
     });
 
