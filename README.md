@@ -4,9 +4,9 @@ For the dancing robot chicken.
 
 ## Prerequisites
 
-Node JS
-MongoDB
-npm
+- Node JS
+- MongoDB
+- npm
 
 ## Installing
 
