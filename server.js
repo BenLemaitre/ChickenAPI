@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
+var passport = require('passport');
 
 // Importing routes
 var puppet = require('./app/routes/puppet_routes');
@@ -21,15 +22,9 @@ mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-//Use sessions for tracking logins
-app.use(session({
-  secret: 'work hard',
-  resave: true,
-  saveUninitialized: false,
-  store: new MongoStore({
-    mongooseConnection: db
-  })
-}));
+//Initialize passport
+require('./config/passport');
+app.use(passport.initialize());
 
 // Enable cors
 app.use(cors());
@@ -40,6 +35,13 @@ app.use(function(req, res, next) {
    next();
 });
 
+// Catch unauthorised errors
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401);
+    res.json({"message" : err.name + ": " + err.message});
+  }
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));

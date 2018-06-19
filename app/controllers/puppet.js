@@ -14,16 +14,17 @@ exports.puppet_create = function (req, res, next) {
             name: req.body.name,
             btMac: req.body.btMac,
             btPw: req.body.btPw,
-            user: req.session.userId
+            user: req.payload._id
         }
     );
 
+    console.log(req.payload);
     puppet.save(function (err) {
         if (err) {
             return next(err);
         }
 
-        User.findByIdAndUpdate(req.session.userId, { 
+        User.findByIdAndUpdate(req.payload._id, { 
             $push: { 'puppets': puppet._id }
         }, { 'new': true },
         function(err) {

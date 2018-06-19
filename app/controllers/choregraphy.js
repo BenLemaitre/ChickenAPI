@@ -15,7 +15,7 @@ exports.choregraphy_create = function (req, res, next) {
     var choregraphy = new Choregraphy(
         {
             name: req.body.name,
-            user: req.session.userId,
+            user: req.payload._id,
             movement: req.body.movement
         }
     );
@@ -25,7 +25,7 @@ exports.choregraphy_create = function (req, res, next) {
             return next(err);
         }
 
-        User.findByIdAndUpdate(req.session.userId, { 
+        User.findByIdAndUpdate(req.payload._id, { 
             $push: { 'choregraphies': choregraphy._id }
         }, { 'new': true },
         function(err) {
