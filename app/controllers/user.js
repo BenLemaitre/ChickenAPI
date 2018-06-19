@@ -56,6 +56,7 @@ exports.user_login = function(req, res) {
       token = user.generateJwt();
       res.status(200);
       res.json({
+        "success": true,
         "token" : token
       });
     } else {
