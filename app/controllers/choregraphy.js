@@ -1,5 +1,6 @@
 var Choregraphy = require('../models/choregraphy');
 var User = require('../models/user');
+var inoScripts = require('./inoScripts');
 var path = require('path');
 var async = require('async');
 var fs = require('fs');
@@ -70,7 +71,7 @@ exports.choregraphy_generate = function (req, res, next) {
     if(!Array.isArray(choregraphies))
         choregraphies = [req.body.choregraphy];
 
-    fs.writeFileSync(pathScript, "/*----C file " + fileName + " starts----*/\n", function(err) {
+    fs.writeFileSync(pathScript, inoScripts.arduinoStart(), function(err) {
         if(err) return next(err);
     });
 
@@ -90,7 +91,7 @@ exports.choregraphy_generate = function (req, res, next) {
                 });
 
                 for(var j = 0; j < c.movement.length; j++) {
-                    fs.appendFileSync(pathScript, '\n\n' + c.movement[j].name, function(err) {
+                    fs.appendFileSync(pathScript, '\n\n' + inoScripts.arduinoMovement(c.movement[j].name), function(err) {
                         if(err) next(err);
                     });
                 }
@@ -101,3 +102,4 @@ exports.choregraphy_generate = function (req, res, next) {
         res.download(pathScript);
     });
 };
+
