@@ -10,7 +10,11 @@ exports.movement_list = function(req, res, next) {
 exports.movement_create = function (req, res, next) {
     var movement = new Movement(
         {
-            name: req.body.name
+            name: req.body.name,
+            steps: req.body.steps,
+            time: req.body.time,
+            direction: req.body.direction,
+            height: req.body.height
         }
     );
 

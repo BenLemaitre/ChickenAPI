@@ -34,8 +34,24 @@ void loop() {\n\
 	},
 
 	arduinoMovement: function(movement) {
-		return "void " + movement + "(float steps=1, int T = 2000);\n\
-delay(D);"
-		
+		var codeLine
+		if(movement.steps && movement.time && !movement.direction && !movement.height) {
+			codeLine = "void " + movement.name + "(float steps=" + movement.steps+ ", int T = " + movement.time + ");\n\
+delay(D);";
+		} else if(movement.steps && movement.time && movement.direction && !movement.height) {
+			var codeLine = "void " + movement.name + "(float steps=" + movement.steps+ ", int T = " + movement.time + ", int dir = " + movement.direction + ");\n\
+delay(D);";
+		} else if(movement.steps && movement.time && !movement.direction && movement.height) {
+			var codeLine = "void " + movement.name + "(float steps=" + movement.steps+ ", int T = " + movement.time + ", int h = " + movement.height + ");\n\
+delay(D);";
+		} else if(movement.steps && movement.time && movement.direction && movement.height) {
+				var codeLine = "void " + movement.name + "(float steps=" + movement.steps+ ", int T = " + movement.time + ", int h = " + movement.height + ", int dir = " + movement.direction + ");\n\
+delay(D);";
+		} else if(movement.name === "delay") {
+				var codeLine = "delay(" + movement.time + ");";
+		} else {
+			codeLine = "//Error while generating the movement : " + movement.name;
+		}
+	  return codeLine;
 	}
 }

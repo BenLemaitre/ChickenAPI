@@ -26,7 +26,7 @@ exports.choregraphy_create = function (req, res, next) {
             return next(err);
         }
 
-        User.findByIdAndUpdate(req.payload._id, { 
+        User.findByIdAndUpdate(req.payload._id, {
             $push: { 'choregraphies': choregraphy._id }
         }, { 'new': true },
         function(err) {
@@ -65,7 +65,7 @@ exports.choregraphy_generate = function (req, res, next) {
     var ts = new Date();
     var fileName = "Choregraphies_" + ts.getFullYear() + ts.getMonth() + ts.getDate() +
         "_" + ts.getHours() + ts.getMinutes() + ts.getSeconds()
-    var pathScript = path.join(__dirname + "/../../scripts/" + fileName + ".c");
+    var pathScript = path.join(__dirname + "/../../scripts/" + fileName + ".ino");
     var choregraphies = req.body.choregraphy;
 
     if(!Array.isArray(choregraphies))
@@ -91,7 +91,7 @@ exports.choregraphy_generate = function (req, res, next) {
                 });
 
                 for(var j = 0; j < c.movement.length; j++) {
-                    fs.appendFileSync(pathScript, '\n\n' + inoScripts.arduinoMovement(c.movement[j].name), function(err) {
+                    fs.appendFileSync(pathScript, '\n\n' + inoScripts.arduinoMovement(c.movement[j]), function(err) {
                         if(err) next(err);
                     });
                 }
@@ -102,4 +102,3 @@ exports.choregraphy_generate = function (req, res, next) {
         res.download(pathScript);
     });
 };
-
