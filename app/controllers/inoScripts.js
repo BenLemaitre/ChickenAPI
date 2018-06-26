@@ -28,9 +28,15 @@ void setup(){\n\
   #ifdef DEBUG\n\
     Serial.begin(9600);\n\
  #endif\n\
-}\n\
-void loop() {\n\
-		"
+}\n\"";
+	},
+
+	arduinoButtons: function(choregraphies) {
+		var buttons;
+		for(var i in choregraphies) {
+			buttons = "bool button" + i + " = 0;";
+		}
+		return buttons;
 	},
 
 	arduinoMovement: function(movement) {

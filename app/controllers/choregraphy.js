@@ -6,9 +6,11 @@ var async = require('async');
 var fs = require('fs');
 
 exports.choregraphy_list = function(req, res, next) {
-    Choregraphy.find(function(err, items) {
-        if(err) return next(err);
-        res.send(items);
+    Choregraphy.find()
+        .populate('movement')
+        .exec(function(err, items) {
+            if(err) return next(err);
+            res.send(items);
     });
 }
 
@@ -71,9 +73,15 @@ exports.choregraphy_generate = function (req, res, next) {
     if(!Array.isArray(choregraphies))
         choregraphies = [req.body.choregraphy];
 
+    
+
     fs.writeFileSync(pathScript, inoScripts.arduinoStart(), function(err) {
         if(err) return next(err);
     });
+
+    // fs.writeFileSync(pathScript, inoScripts.arduinoButtons(choregraphies), function(err) {
+    //             if(err) return next(err);
+    //     });
 
     async.forEach(choregraphies, function(choregraphy, callback) {
         Choregraphy.findById(choregraphy)
