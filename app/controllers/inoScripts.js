@@ -1,11 +1,8 @@
 module.exports = {
-	arduinoStart: function() {
-		return "//----------------------------------------------------------------\n\
-//-- CC BY SA (http://ottodiy.com)\n\
-//-----------------------------------------------------------------\n\
-//-- Otto will run fast straight forward with this code!\n\
-//-----------------------------------------------------------------\n\
-#include <Servo.h>\n\
+	arduinoStart: function(choregraphies) {
+		var buttons;
+		var ifBtn;
+		var scriptStarts = "#include <Servo.h>\n\
 #include <SoftwareSerial.h>\n\
 #include <Oscillator.h>\n\
 #include <US.h>\n\
@@ -16,42 +13,61 @@ SoftwareSerial HC06(6, 7);\n\
 #define PIN_YR 3 //servo[3]\n\
 #define PIN_RL 4 //servo[4]\n\
 #define PIN_RR 5 //servo[5]\n\
-#define DEBUG\n\
-bool button;\n\
-int limit = 1;\n\
-int D = 500;\n\
+int D = 500; // value of the delay between each move\n\
+String read; // read the app information\n\
 void setup(){\n\
   //Set the servo pins\n\
   Otto.init(PIN_YL,PIN_YR,PIN_RL,PIN_RR,true);\n\
-  Otto.home();\n\
-  HC06.begin(9600);\n\
-  #ifdef DEBUG\n\
-    Serial.begin(9600);\n\
- #endif\n\
-}\n\"";
-	},
+  Otto.home(); // Initialisation de l'OTTO\n\
+  HC06.begin(9600); // Initialisation hc06\n\
+}\n";
 
-	arduinoButtons: function(choregraphies) {
-		var buttons;
 		for(var i in choregraphies) {
-			buttons = "bool button" + i + " = 0;";
+			if(buttons == undefined)
+				buttons = "String key_btn_0 = \"choregraphy_0\";\n";
+			else
+				buttons += "String key_btn_" + i + " = \"choregraphy_" + i + "\";\n";
 		}
-		return buttons;
+
+		var voidLoop = "void loop() {\n\
+  while(HC06.available() > 0) { // if bluetooth is connected\n\
+    read = HC06.readString();\n";
+
+    	for(var i in choregraphies) {
+    		if(ifBtn == undefined) {
+    			ifBtn = "if(read == key_btn_0){\n\
+  choregraphy0();\n\
+ }\n";
+    		} else {
+    			ifBtn += "if(read == key_btn_" + i + "){\n\
+  choregraphy" + i + "();\n\
+ }\n";
+ 			}
+    	}
+
+    	var closingLoop = "}\n}\n";
+
+		var script_done = scriptStarts + buttons + voidLoop + ifBtn + closingLoop;
+
+		return script_done;
 	},
 
 	arduinoMovement: function(movement) {
-		var codeLine
+		var codeLine;
 		if(movement.steps && movement.time && !movement.direction && !movement.height) {
-			codeLine = "void " + movement.name + "(float steps=" + movement.steps+ ", int T = " + movement.time + ");\n\
+			codeLine = "Otto." + movement.name + "(" + movement.steps+ "," + movement.time + ");\n\
 delay(D);";
 		} else if(movement.steps && movement.time && movement.direction && !movement.height) {
-			var codeLine = "void " + movement.name + "(float steps=" + movement.steps+ ", int T = " + movement.time + ", int dir = " + movement.direction + ");\n\
+			var codeLine = "Otto." + movement.name + "(" + movement.steps + "," + movement.time + "," + movement.direction + ");\n\
 delay(D);";
 		} else if(movement.steps && movement.time && !movement.direction && movement.height) {
-			var codeLine = "void " + movement.name + "(float steps=" + movement.steps+ ", int T = " + movement.time + ", int h = " + movement.height + ");\n\
+			var codeLine = "Otto." + movement.name + "(" + movement.steps + "," + movement.time + "," + movement.height + ");\n\
 delay(D);";
 		} else if(movement.steps && movement.time && movement.direction && movement.height) {
-				var codeLine = "void " + movement.name + "(float steps=" + movement.steps+ ", int T = " + movement.time + ", int h = " + movement.height + ", int dir = " + movement.direction + ");\n\
+				var codeLine = "Otto." + movement.name + "(" + movement.steps+ "," + movement.time + "," + movement.height + "," + movement.direction + ");\n\
+delay(D);";
+		} else if(!movement.steps && !movement.time && !movement.direction && !movement.height) {
+				var codeLine = "Otto." + movement.name + "();\n\
 delay(D);";
 		} else if(movement.name === "delay") {
 				var codeLine = "delay(" + movement.time + ");";

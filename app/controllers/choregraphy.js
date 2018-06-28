@@ -64,6 +64,7 @@ exports.choregraphy_delete = function (req, res, next) {
 };
 
 exports.choregraphy_generate = function (req, res, next) {
+    var count = 0;
     var ts = new Date();
     var fileName = "Choregraphies_" + ts.getFullYear() + ts.getMonth() + ts.getDate() +
         "_" + ts.getHours() + ts.getMinutes() + ts.getSeconds()
@@ -73,15 +74,9 @@ exports.choregraphy_generate = function (req, res, next) {
     if(!Array.isArray(choregraphies))
         choregraphies = [req.body.choregraphy];
 
-    
-
-    fs.writeFileSync(pathScript, inoScripts.arduinoStart(), function(err) {
+    fs.writeFileSync(pathScript, inoScripts.arduinoStart(choregraphies), function(err) {
         if(err) return next(err);
     });
-
-    // fs.writeFileSync(pathScript, inoScripts.arduinoButtons(choregraphies), function(err) {
-    //             if(err) return next(err);
-    //     });
 
     async.forEach(choregraphies, function(choregraphy, callback) {
         Choregraphy.findById(choregraphy)
@@ -90,11 +85,11 @@ exports.choregraphy_generate = function (req, res, next) {
                 if (err) return next(err);
 
                 if(c == null || c == undefined) {
-                    callback('Choregraphy not found');
+                    callback('Choregraphy not found!');
                     return res.status(404);
                 }
 
-                fs.appendFileSync(pathScript, "\n\n/*----Choregraphy " + c.name + " starts----*/\n", function(err) {
+                fs.appendFileSync(pathScript, "\n\nvoid choregraphy" + count + "(){", function(err) {
                     if(err) return next(err);
                 });
 
@@ -103,6 +98,13 @@ exports.choregraphy_generate = function (req, res, next) {
                         if(err) next(err);
                     });
                 }
+
+                fs.appendFileSync(pathScript, "\n}\n", function(err) {
+                    if(err) return next(err);
+                });
+
+                count++;
+
                 callback();
             });
     }, function (err) {
