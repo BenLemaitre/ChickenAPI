@@ -2,11 +2,6 @@
 var express = require('express');
 var router = express.Router();
 var movement_controller = require('../controllers/movement');
-var jwt = require('express-jwt');
-var auth = jwt({
-  secret: 'MY_SECRET',
-  userProperty: 'payload'
-});
 
 router.get('/', movement_controller.movement_list); 				//List all movements
 router.post('/create', movement_controller.movement_create); 		//Create a movement

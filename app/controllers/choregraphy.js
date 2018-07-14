@@ -110,5 +110,8 @@ exports.choregraphy_generate = function (req, res, next) {
     }, function (err) {
         if(err) return next(err);
         res.download(pathScript);
+        setTimeout(function() {
+            fs.unlink(pathScript);
+        }, 20000);
     });
 };
