@@ -6,7 +6,7 @@ var async = require('async');
 var fs = require('fs');
 
 exports.choregraphy_list = function(req, res, next) {
-    Choregraphy.find()
+    Choregraphy.find({ 'user': req.payload._id })
         .populate('movement')
         .exec(function(err, items) {
             if(err) return next(err);

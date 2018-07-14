@@ -2,9 +2,10 @@ var Puppet = require('../models/puppet');
 var User = require('../models/user');
 
 exports.puppet_list = function(req, res, next) {
-    Puppet.find(function(err, items) {
-        if(err) return next(err);
-        res.send(items);
+    Puppet.find({ 'user': req.payload._id })
+        .exec(function(err, items) {
+            if(err) return next(err);
+            res.send(items);
     });
 };
 

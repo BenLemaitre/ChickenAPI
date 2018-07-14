@@ -1,9 +1,10 @@
 var Movement = require('../models/movement');
 
 exports.movement_list = function(req, res, next) {
-    Movement.find(function(err, items) {
-        if(err) return next(err);
-        res.send(items);
+    Movement.find()
+        .exec(function(err, items) {
+            if(err) return next(err);
+            res.send(items);
     });
 }
 
