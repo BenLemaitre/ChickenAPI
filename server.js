@@ -51,7 +51,7 @@ app.use('/choregraphies', choregraphy);
 app.use('/movements', movement);
 app.use('/', user);
 
-var port = 3000;
+var port = process.env.PORT || 8000;
 
 app.listen(port, () => {
     console.log('App listening on port ' + port);

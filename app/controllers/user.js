@@ -7,6 +7,10 @@ var sendJSONresponse = function(res, status, content) {
   res.json(content);
 };
 
+exports.user_index = function(req, res) {
+  res.send("Chicken API");
+};
+
 exports.user_register = function(req, res) {
 
   // if(!req.body.email || !req.body.password) {
