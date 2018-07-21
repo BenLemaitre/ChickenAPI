@@ -71,7 +71,7 @@ exports.user_login = function(req, res) {
 
 };
 
-
+//Get the user profile, an error is thrown if no token is found
 exports.user_profile = function(req, res) {
 
   if (!req.payload._id) {

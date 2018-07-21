@@ -1,3 +1,8 @@
+// Project : Projet Cocotte
+// Licence Pro Dev Web 2017/2018 - Université de Cergy-Pontoise
+// ChickenAPI created by B.Lemaitre
+// Date: June 6, 2018
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');

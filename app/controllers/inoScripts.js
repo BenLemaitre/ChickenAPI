@@ -1,3 +1,6 @@
+//The "first bloc" of the arduino script
+//It contains the librairies and the required Bluetooth information
+//To make the Otto working
 module.exports = {
 	arduinoStart: function(choregraphies) {
 		var buttons;
@@ -21,7 +24,8 @@ void setup(){\n\
   Otto.home(); // Initialisation de l'OTTO\n\
   HC06.begin(9600); // Initialisation hc06\n\
 }\n";
-
+		//For each choregraphies, we generate a "button" that will be used
+		//By the phone app to run the different choregraphies
 		for(var i in choregraphies) {
 			if(buttons == undefined)
 				buttons = "String key_btn_0 = \"choregraphy_0\";\n";
@@ -54,6 +58,7 @@ void setup(){\n\
 
 	arduinoMovement: function(movement) {
 		var codeLine;
+		//We write every movements with the right parameters
 		if(movement.steps && movement.time && !movement.direction && !movement.height) {
 			codeLine = "Otto." + movement.name + "(" + movement.steps+ "," + movement.time + ");\n\
 delay(D);";

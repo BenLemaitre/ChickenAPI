@@ -1,5 +1,7 @@
 var Movement = require('../models/movement');
 
+
+//List of all the movements created by all users
 exports.movement_list = function(req, res, next) {
     Movement.find()
         .exec(function(err, items) {
@@ -8,6 +10,7 @@ exports.movement_list = function(req, res, next) {
     });
 }
 
+//Create a movement
 exports.movement_create = function (req, res, next) {
     var movement = new Movement(
         {
@@ -27,6 +30,7 @@ exports.movement_create = function (req, res, next) {
     });
 };
 
+//Get the details of a specific movement (found by Id)
 exports.movement_details = function (req, res, next) {
     Movement.findById(req.params.id, function (err, item) {
         if (err) return next(err);
@@ -34,6 +38,7 @@ exports.movement_details = function (req, res, next) {
     });
 };
 
+//Update a movement (found by Id)
 exports.movement_update = function (req, res, next) {
     Movement.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, movement) {
         if (err) return next(err);
@@ -41,6 +46,7 @@ exports.movement_update = function (req, res, next) {
     });
 };
 
+//Delete a movement
 exports.movement_delete = function (req, res, next) {
     Movement.findByIdAndRemove(req.params.id, function (err) {
         if (err) return next(err);
